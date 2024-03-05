@@ -11,7 +11,7 @@ def tutorial7_rag_generator():
     # Add documents from which you want generate answers
     # Download a csv containing some sample documents data
     # Here some sample documents data
-    temp = requests.get("https://raw.githubusercontent.com/deepset-ai/haystack/master/tutorials/small_generator_dataset.csv")
+    temp = requests.get("https://raw.githubusercontent.com/deepset-ai/haystack/master/tutorials/small_generator_dataset.csv", timeout=60)
     open('small_generator_dataset.csv', 'wb').write(temp.content)
 
     # Get dataframe with columns "title", and "text"
