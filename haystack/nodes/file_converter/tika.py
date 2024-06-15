@@ -69,7 +69,7 @@ class TikaConverter(BaseConverter):
             valid_languages=valid_languages,
         )
 
-        ping = requests.get(tika_url)
+        ping = requests.get(tika_url, timeout=60)
         if ping.status_code != 200:
             raise Exception(
                 f"Apache Tika server is not reachable at the URL '{tika_url}'. To run it locally"
