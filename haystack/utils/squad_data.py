@@ -2,12 +2,12 @@ from typing import List
 
 import logging
 import json
-import random
 import pandas as pd
 from tqdm import tqdm
 
 from haystack.schema import Document, Label
 from haystack.modeling.data_handler.processor import _read_squad_file
+import secrets
 
 
 logging.basicConfig()
@@ -236,7 +236,7 @@ class SquadData:
         as a single question
         """
         all_questions = self.get_all_questions()
-        sampled_questions = random.sample(all_questions, n)
+        sampled_questions = secrets.SystemRandom().sample(all_questions, n)
         df_sampled = self.df[self.df["question"].isin(sampled_questions)]
         return self.df_to_data(df_sampled)
 
