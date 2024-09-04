@@ -3,6 +3,7 @@ import os
 import logging
 import requests
 import streamlit as st
+from security import safe_requests
 
 API_ENDPOINT = os.getenv("API_ENDPOINT", "http://localhost:8000")
 STATUS = "initialized"
@@ -14,7 +15,7 @@ DOC_UPLOAD = "file-upload"
 def haystack_is_ready():
     url = f"{API_ENDPOINT}/{STATUS}"
     try:
-        if requests.get(url).json():
+        if safe_requests.get(url).json():
             return True
     except Exception as e:
         logging.exception(e)
