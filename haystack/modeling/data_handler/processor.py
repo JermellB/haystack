@@ -2097,7 +2097,7 @@ def _read_squad_file(filename: str, proxies=None):
 
 
 def http_get(url, temp_file, proxies=None):
-    req = requests.get(url, stream=True, proxies=proxies)
+    req = requests.get(url, stream=True, proxies=proxies, timeout=60)
     content_length = req.headers.get("Content-Length")
     total = int(content_length) if content_length is not None else None
     progress = tqdm(unit="B", total=total)
