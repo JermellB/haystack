@@ -3,7 +3,6 @@ from typing import Optional, List, Tuple, Dict, Union
 import hashlib
 import json
 import logging
-import random
 from contextlib import ExitStack
 from functools import partial
 from itertools import groupby
@@ -21,6 +20,7 @@ from haystack.modeling.data_handler.processor import Processor
 from haystack.modeling.logger import MLFlowLogger as MlLogger
 from haystack.modeling.utils import log_ascii_workers, grouper, calc_chunksize
 from haystack.modeling.visual import TRACTOR_SMALL
+import secrets
 
 
 logger = logging.getLogger(__name__)
@@ -123,7 +123,7 @@ class DataSilo:
             if str(self.processor.train_filename) in str(filename):
                 if not self.processor.dev_filename:
                     if self.processor.dev_split > 0.0:
-                        random.shuffle(dicts)
+                        secrets.SystemRandom().shuffle(dicts)
 
         num_dicts = len(dicts)
         multiprocessing_chunk_size, num_cpus_used = calc_chunksize(
@@ -673,7 +673,7 @@ class DataSiloForCrossVal:
                     if len(neg_answer_idx) <= n_neg_answers_per_question:
                         train_samples.extend([sample_list[idx] for idx in neg_answer_idx])
                     else:
-                        neg_answer_idx = random.sample(neg_answer_idx, n_neg_answers_per_question)
+                        neg_answer_idx = secrets.SystemRandom().sample(neg_answer_idx, n_neg_answers_per_question)
                         train_samples.extend([sample_list[idx] for idx in neg_answer_idx])
 
             ds_train = train_samples
@@ -686,7 +686,7 @@ class DataSiloForCrossVal:
                       random_state: Optional[int] = None):
         keyfunc = lambda x: x[id_index][1]
         if shuffle:
-            random.shuffle(documents, random_state)  # type: ignore
+            secrets.SystemRandom().shuffle(documents, random_state)  # type: ignore
 
         questions_per_doc = []
         for doc in documents:
