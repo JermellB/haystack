@@ -3,9 +3,9 @@ from typing import Optional
 import io
 import tarfile
 import zipfile
-import requests
 import logging
 from pathlib import Path
+from security import safe_requests
 
 
 logger = logging.getLogger(__name__)
@@ -35,7 +35,7 @@ def fetch_archive_from_http(url: str, output_dir: str, proxies: Optional[dict] =
         logger.info(f"Fetching from {url} to `{output_dir}`")
 
         _, _, archive_extension = url.rpartition(".")
-        request_data = requests.get(url, proxies=proxies)
+        request_data = safe_requests.get(url, proxies=proxies)
 
         if archive_extension == "zip":
             zip_archive = zipfile.ZipFile(io.BytesIO(request_data.content))

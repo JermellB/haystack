@@ -1,12 +1,12 @@
 from typing import List, Optional, Dict, Any
 
 import logging
-import requests
 from pathlib import Path
 from html.parser import HTMLParser
 from tika import parser as tikaparser
 
 from haystack.nodes.file_converter import BaseConverter
+from security import safe_requests
 
 
 logger = logging.getLogger(__name__)
@@ -69,7 +69,7 @@ class TikaConverter(BaseConverter):
             valid_languages=valid_languages,
         )
 
-        ping = requests.get(tika_url)
+        ping = safe_requests.get(tika_url)
         if ping.status_code != 200:
             raise Exception(
                 f"Apache Tika server is not reachable at the URL '{tika_url}'. To run it locally"
