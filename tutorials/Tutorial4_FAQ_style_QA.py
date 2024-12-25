@@ -47,7 +47,7 @@ def tutorial4_faq_style_qa():
 
     # Download a csv containing some FAQ data
     # Here: Some question-answer pairs related to COVID-19
-    temp = requests.get("https://raw.githubusercontent.com/deepset-ai/COVID-QA/master/data/faqs/faq_covidbert.csv")
+    temp = requests.get("https://raw.githubusercontent.com/deepset-ai/COVID-QA/master/data/faqs/faq_covidbert.csv", timeout=60)
     open('small_faq_covid.csv', 'wb').write(temp.content)
 
     # Get dataframe with columns "question", "answer" and some custom metadata
