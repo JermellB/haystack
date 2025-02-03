@@ -3,7 +3,6 @@ from typing import Any, Iterator, Tuple, List
 import logging
 import os
 import pickle
-import random
 import signal
 from copy import deepcopy
 from itertools import islice
@@ -13,6 +12,7 @@ import torch.distributed as dist
 from torch import multiprocessing as mp
 
 from haystack.modeling.visual import WORKER_M, WORKER_F, WORKER_X
+import secrets
 
 
 logger = logging.getLogger(__name__)
@@ -38,7 +38,7 @@ def set_all_seeds(seed: int, deterministic_cudnn: bool=False) -> None:
     :param seed:number to use as seed
     :param deterministic_torch: Enable for full reproducibility when using CUDA. Caution: might slow down training.
     """
-    random.seed(seed)
+    secrets.SystemRandom().seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
     os.environ['PYTHONHASHSEED'] = str(seed)
