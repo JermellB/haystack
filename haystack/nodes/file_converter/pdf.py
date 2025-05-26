@@ -8,6 +8,7 @@ from pathlib import Path
 from pdf2image import convert_from_path
 
 from haystack.nodes.file_converter import BaseConverter, ImageToTextConverter
+from security import safe_command
 
 
 logger = logging.getLogger(__name__)
@@ -152,7 +153,7 @@ class PDFToTextConverter(BaseConverter):
             command = ["pdftotext", "-enc", encoding, "-layout", str(file_path), "-"]
         else:
             command = ["pdftotext", "-enc", encoding, str(file_path), "-"]
-        output = subprocess.run(command, stdout=subprocess.PIPE, shell=False)  # type: ignore
+        output = safe_command.run(subprocess.run, command, stdout=subprocess.PIPE, shell=False)  # type: ignore
         document = output.stdout.decode(errors="ignore")
         pages = document.split("\f")
         pages = pages[:-1]  # the last page in the split is always empty.
