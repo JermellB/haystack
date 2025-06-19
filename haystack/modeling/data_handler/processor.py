@@ -6,7 +6,6 @@ import random
 import tarfile
 import tempfile
 import uuid
-import requests
 from tqdm import tqdm
 from abc import ABC, abstractmethod
 from inspect import signature
@@ -32,6 +31,7 @@ from haystack.modeling.data_handler.samples import (
 )
 from haystack.modeling.data_handler.input_features import sample_to_features_text
 from haystack.modeling.logger import MLFlowLogger as MlLogger
+from security import safe_requests
 
 
 DOWNSTREAM_TASK_MAP = {
@@ -2097,7 +2097,7 @@ def _read_squad_file(filename: str, proxies=None):
 
 
 def http_get(url, temp_file, proxies=None):
-    req = requests.get(url, stream=True, proxies=proxies)
+    req = safe_requests.get(url, stream=True, proxies=proxies)
     content_length = req.headers.get("Content-Length")
     total = int(content_length) if content_length is not None else None
     progress = tqdm(unit="B", total=total)
