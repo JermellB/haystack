@@ -54,7 +54,7 @@ class GraphDBKnowledgeGraph(BaseKnowledgeGraph):
         response = requests.post(
             url,
             files=files,
-        )
+        timeout=60)
         if response.status_code > 299:
             raise Exception(response.text)
 
@@ -63,7 +63,7 @@ class GraphDBKnowledgeGraph(BaseKnowledgeGraph):
         Delete the index that GraphDBKnowledgeGraph is connected to. This method deletes all data stored in the index.
         """
         url = f"{self.url}/rest/repositories/{self.index}"
-        response = requests.delete(url)
+        response = requests.delete(url, timeout=60)
         if response.status_code > 299:
             raise Exception(response.text)
 
@@ -81,7 +81,7 @@ class GraphDBKnowledgeGraph(BaseKnowledgeGraph):
             headers=headers,
             data=open(path, "r", encoding="utf-8").read().encode('utf-8'),
             auth=HTTPBasicAuth(self.username, self.password),
-        )
+        timeout=60)
         if response.status_code > 299:
             raise Exception(response.text)
 

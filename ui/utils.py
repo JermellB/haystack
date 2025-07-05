@@ -14,7 +14,7 @@ DOC_UPLOAD = "file-upload"
 def haystack_is_ready():
     url = f"{API_ENDPOINT}/{STATUS}"
     try:
-        if requests.get(url).json():
+        if requests.get(url, timeout=60).json():
             return True
     except Exception as e:
         logging.exception(e)
@@ -27,7 +27,7 @@ def retrieve_doc(query, filters=None, top_k_reader=5, top_k_retriever=5):
     url = f"{API_ENDPOINT}/{DOC_REQUEST}"
     params = {"filters": filters, "Retriever": {"top_k": top_k_retriever}, "Reader": {"top_k": top_k_reader}}
     req = {"query": query, "params": params}
-    response_raw = requests.post(url, json=req).json()
+    response_raw = requests.post(url, json=req, timeout=60).json()
 
     # Format response
     result = []
@@ -62,12 +62,12 @@ def feedback_doc(question, is_correct_answer, document_id, model_id, is_correct_
         "answer": answer,
         "offset_start_in_doc": offset_start_in_doc,
     }
-    response_raw = requests.post(url, json=req).json()
+    response_raw = requests.post(url, json=req, timeout=60).json()
     return response_raw
 
 
 def upload_doc(file):
     url = f"{API_ENDPOINT}/{DOC_UPLOAD}"
     files = [("files", file)]
-    response_raw = requests.post(url, files=files).json()
+    response_raw = requests.post(url, files=files, timeout=60).json()
     return response_raw
