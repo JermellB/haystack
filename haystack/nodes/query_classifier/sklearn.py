@@ -1,10 +1,10 @@
 import logging
 from pathlib import Path
 from typing import Union, Any
-import pickle
 import urllib
 
 from haystack.nodes.query_classifier import BaseQueryClassifier
+import fickling
 
 
 logger = logging.getLogger(__name__)
@@ -88,8 +88,8 @@ class SklearnQueryClassifier(BaseQueryClassifier):
             file_url = urllib.request.pathname2url(r"{}".format(vectorizer_name_or_path))
             vectorizer_name_or_path = f"file:{file_url}"
 
-        self.model = pickle.load(urllib.request.urlopen(model_name_or_path))
-        self.vectorizer = pickle.load(urllib.request.urlopen(vectorizer_name_or_path))
+        self.model = fickling.load(urllib.request.urlopen(model_name_or_path))
+        self.vectorizer = fickling.load(urllib.request.urlopen(vectorizer_name_or_path))
 
 
     def run(self, query):
