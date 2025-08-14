@@ -2,7 +2,6 @@ import inspect
 import json
 import logging
 import os
-import random
 import tarfile
 import tempfile
 import uuid
@@ -32,6 +31,7 @@ from haystack.modeling.data_handler.samples import (
 )
 from haystack.modeling.data_handler.input_features import sample_to_features_text
 from haystack.modeling.logger import MLFlowLogger as MlLogger
+import secrets
 
 
 DOWNSTREAM_TASK_MAP = {
@@ -333,8 +333,8 @@ class Processor(ABC):
             logger.debug("*** No samples to show because there are no baskets ***")
             return
         for i in range(n_samples):
-            random_basket = random.choice(baskets)
-            random_sample = random.choice(random_basket.samples) # type: ignore
+            random_basket = secrets.choice(baskets)
+            random_sample = secrets.choice(random_basket.samples) # type: ignore
             logger.debug(random_sample)
 
     def _log_params(self):
@@ -1004,7 +1004,7 @@ class TextSimilarityProcessor(Processor):
         dicts = _read_dpr_json(file, max_samples=self.max_samples, num_hard_negatives=self.num_hard_negatives, num_positives=self.num_positives, shuffle_negatives=self.shuffle_negatives, shuffle_positives=self.shuffle_positives)
 
         # shuffle dicts to make sure that similar positive passages do not end up in one batch
-        dicts = random.sample(dicts, len(dicts))
+        dicts = secrets.SystemRandom().sample(dicts, len(dicts))
         return dicts
 
     def _fill_baskets(self, dicts: List[dict], indices: Optional[List[int]]):
@@ -1068,11 +1068,11 @@ class TextSimilarityProcessor(Processor):
                 try:
                     positive_context = list(filter(lambda x: x["label"] == "positive", basket.raw["passages"]))
                     if self.shuffle_positives:
-                        random.shuffle(positive_context)
+                        secrets.SystemRandom().shuffle(positive_context)
                     positive_context = positive_context[:self.num_positives]
                     hard_negative_context = list(filter(lambda x: x["label"] == "hard_negative", basket.raw["passages"]))
                     if self.shuffle_negatives:
-                        random.shuffle(hard_negative_context)
+                        secrets.SystemRandom().shuffle(hard_negative_context)
                     hard_negative_context = hard_negative_context[:self.num_hard_negatives]
 
                     positive_ctx_titles = [passage.get("title", None) for passage in positive_context]
@@ -1379,7 +1379,7 @@ class TableTextSimilarityProcessor(Processor):
             """
         dicts = json.load(open(file))
         if max_samples:
-            dicts = random.sample(dicts, min(max_samples, len(dicts)))
+            dicts = secrets.SystemRandom().sample(dicts, min(max_samples, len(dicts)))
         # convert DPR dictionary to standard dictionary
         query_json_keys = ["question", "questions", "query"]
         positive_context_json_keys = ["positive_contexts", "positive_ctxs", "positive_context", "positive_ctx"]
@@ -1519,12 +1519,12 @@ class TableTextSimilarityProcessor(Processor):
                 try:
                     positive_context = list(filter(lambda x: x["label"] == "positive", basket.raw["passages"]))
                     if self.shuffle_positives:
-                        random.shuffle(positive_context)
+                        secrets.SystemRandom().shuffle(positive_context)
                     positive_context = positive_context[:self.num_positives]
                     hard_negative_context = list(
                         filter(lambda x: x["label"] == "hard_negative", basket.raw["passages"]))
                     if self.shuffle_negatives:
-                        random.shuffle(hard_negative_context)
+                        secrets.SystemRandom().shuffle(hard_negative_context)
                     hard_negative_context = hard_negative_context[:self.num_hard_negatives]
 
                     positive_ctx_meta = []
@@ -2048,7 +2048,7 @@ def _read_dpr_json(file: str, max_samples: Optional[int] = None, proxies: Any = 
         dicts = json.load(open(file, encoding='utf-8'))
 
     if max_samples:
-        dicts = random.sample(dicts, min(max_samples, len(dicts)))
+        dicts = secrets.SystemRandom().sample(dicts, min(max_samples, len(dicts)))
 
     # convert DPR dictionary to standard dictionary
     query_json_keys = ["question", "questions", "query"]
@@ -2063,7 +2063,7 @@ def _read_dpr_json(file: str, max_samples: Optional[int] = None, proxies: Any = 
                 sample["query"] = val
             elif key in positive_context_json_keys:
                 if shuffle_positives:
-                    random.shuffle(val)
+                    secrets.SystemRandom().shuffle(val)
                 for passage in val[:num_positives]:
                     passages.append({
                         "title": passage["title"],
@@ -2073,7 +2073,7 @@ def _read_dpr_json(file: str, max_samples: Optional[int] = None, proxies: Any = 
                         })
             elif key in hard_negative_json_keys:
                 if shuffle_negatives:
-                    random.shuffle(val)
+                    secrets.SystemRandom().shuffle(val)
                 for passage in val[:num_hard_negatives]:
                     passages.append({
                         "title": passage["title"],
